@@ -1,4 +1,4 @@
-:name: LeafType
+:name: Leaf
 :author: Elias Abel
 :mail: admin@meniny.cn
 :desc: a versatile HTTP(s) networking framework written in Swift
