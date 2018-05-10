@@ -12,19 +12,19 @@ public struct LeafRequest {
 
     public typealias LeafContentLength = UInt64
 
-    public enum LeafCachePolicy: UInt {
+    public enum LeafCachePolicy: UInt, Equatable {
         case useProtocolCachePolicy = 0, reloadIgnoringLocalCacheData = 1, returnCacheDataElseLoad = 2, returnCacheDataDontLoad = 3
     }
 
-    public enum LeafServiceType: UInt {
+    public enum LeafServiceType: UInt, Equatable {
         case `default`, voip, video, background, voice, callSignaling = 11
     }
 
-    public enum LeafMethod: String {
+    public enum LeafMethod: String, Equatable {
         case GET, POST, PUT, DELETE, PATCH, UPDATE, HEAD, TRACE, OPTIONS, CONNECT, SEARCH, COPY, MERGE, LABEL, LOCK, UNLOCK, MOVE, MKCOL, PROPFIND, PROPPATCH
     }
 
-    public enum LeafContentEncoding: String {
+    public enum LeafContentEncoding: String, Equatable {
         case gzip, compress, deflate, identity, br
     }
 

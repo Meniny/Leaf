@@ -47,7 +47,7 @@ class LeafURLSessionTaskObserver: NSObject {
         guard let keyPath = keyPath, let task = object as? URLSessionTask, let newValue = change?[.newKey] else {
             return
         }
-        var taskProgress = tasks[task]?.progress
+        var taskProgress: Progress? = tasks[task]?.progress
         if ObservedKeyPath(rawValue: keyPath) == .state, let intValue = newValue as? Int, let state = URLSessionTask.State(rawValue: intValue) {
             if let leafState = LeafTask.LeafState(rawValue: state.rawValue) {
                 tasks[task]?.state = leafState
@@ -74,8 +74,10 @@ class LeafURLSessionTaskObserver: NSObject {
                 taskProgress?.resume()
             }
         }
+        
         let completedUnitCount = max(task.countOfBytesReceived, task.countOfBytesSent)
         var totalUnitCount = max(task.countOfBytesExpectedToReceive, task.countOfBytesExpectedToSend)
+        
         if let response = task.response as? HTTPURLResponse, let contentLengthString = response.allHeaderFields["X-Uncompressed-Content-Length"] as? String, let contentLength = Int64(contentLengthString) {
             totalUnitCount = contentLength
         }

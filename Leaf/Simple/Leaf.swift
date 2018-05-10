@@ -9,31 +9,59 @@ public enum LeafDispatch {
     case synchronously
 }
 
-public enum LeafBodyType {
+public enum LeafBodyType {//: Equatable {
     case string(String, encoding: String.Encoding, lossy: Bool)
 //    case json(Encodable)
 //    case plist(Encodable)
-    case jsonObject([String: Any], options: JSONSerialization.WritingOptions)
-    case plistObject([String: Any], format: PropertyListSerialization.PropertyListFormat, options: PropertyListSerialization.WriteOptions)
+    case jsonObject(Any, options: JSONSerialization.WritingOptions)
+    case plistObject(Any, format: PropertyListSerialization.PropertyListFormat, options: PropertyListSerialization.WriteOptions)
     case stream(InputStream)
     case multipartFormData(LeafMultipartFormData)
     case custom(Data, LeafContentType)
+    
+//    public static func == (lhs: LeafBodyType, rhs: LeafBodyType) -> Bool {
+//        switch (lhs, rhs) {
+//        case let (.custom(a, b), .custom(c, d)):
+//            return a == c && b == d
+//        case let (.string(a, b, c), .string(d, e, f)):
+//            return a == d && b == e && c == f
+//        case let (.jsonObject(a, b), .jsonObject(c, d)):
+//            return a == c && b == d
+//        case let (.plistObject(a, b, c), .plistObject(d, e, f)):
+//            return a == d && b == e && c == f
+//        default:
+//            return false
+//        }
+//    }
 }
 
 public struct Leaf {
-    public var session: LeafURLSession = LeafURLSession.init()
+//public struct Leaf: Equatable {
+//    public static func == (lhs: Leaf, rhs: Leaf) -> Bool {
+//        return lhs.session == rhs.session &&
+//        lhs.requestURL == rhs.requestURL &&
+//        lhs.headerFields == rhs.headerFields &&
+//        lhs.parameters == rhs.parameters &&
+//        lhs.cachePolicy == rhs.cachePolicy &&
+//        lhs.customBody == rhs.customBody
+//    }
+
+    public static var leafs = [String: Leaf]()
     
-    public var requestURL: URL
-    public var parameters: [String: Any]?
-    public var headerFields: [String: String]?
-    public var cachePolicy: LeafRequest.LeafCachePolicy
-    public var customBody: LeafBodyType?
+    public let session: LeafURLSession
+    
+    public let requestURL: URL
+    public let parameters: [String: Any]?
+    public let headerFields: [String: String]?
+    public let cachePolicy: LeafRequest.LeafCachePolicy
+    public let customBody: LeafBodyType?
     
     public init?(_ aURLString: String,
                  parameters: [String: Any]?,
                  headers: [String: String]? = nil,
                  cachePolicy: LeafRequest.LeafCachePolicy = .reloadIgnoringLocalCacheData,
-                 body: LeafBodyType? = nil) {
+                 body: LeafBodyType? = nil,
+                 session: LeafURLSession = LeafURLSession.init()) {
         guard let u = URL.init(string: aURLString) else {
             return nil
         }
@@ -42,38 +70,31 @@ public struct Leaf {
         self.headerFields = headers
         self.cachePolicy = cachePolicy
         self.customBody = body
+        self.session = session
     }
     
     public init(_ aURL: URL,
                 parameters: [String: Any]?,
                 headers: [String: String]? = nil,
                 cachePolicy: LeafRequest.LeafCachePolicy = .reloadIgnoringLocalCacheData,
-                body: LeafBodyType? = nil) {
+                body: LeafBodyType? = nil,
+                session: LeafURLSession = LeafURLSession.init()) {
         
         self.requestURL = aURL
         self.parameters = parameters
         self.headerFields = headers
         self.cachePolicy = cachePolicy
         self.customBody = body
+        self.session = session
     }
-}
-
-//// MARK: - Methods - Requests
-public extension Leaf {
-    @discardableResult
-    public func request(_ dispatch: LeafDispatch,
-                        method: LeafRequest.LeafMethod,
-                        timeout: TimeInterval = 120,
-                        progress: LeafTask.ProgressClosure? = nil,
-                        success: LeafTask.SuccessClosure?,
-                        failure: LeafTask.FailureClosure?) throws -> Leaf {
-        
+    
+    internal func build(method: LeafRequest.LeafMethod, timeout: TimeInterval) throws -> LeafRequest {
         let builder = try LeafRequest.init(self.requestURL).builder()
         builder.setMethod(method)
-            .setURLParameters(self.parameters)
-            .setTimeout(timeout)
-            .setHeaders(self.headerFields)
-            .setCache(self.cachePolicy)
+        builder.setURLParameters(self.parameters)
+        builder.setTimeout(timeout)
+        builder.setHeaders(self.headerFields)
+        builder.setCache(self.cachePolicy)
         
         if let body = self.customBody {
             switch body {
@@ -89,37 +110,61 @@ public extension Leaf {
             case .jsonObject(let json, let options):
                 try builder.setJSONBody(json, options: options)
                 break
-//            case .json(let json):
-//                try builder.setJSONObject(json as? Encodable)
-//            break
+                //            case .json(let json):
+                //                try builder.setJSONObject(json as? Encodable)
+            //            break
             case .plistObject(let plist, let format, let options):
                 try builder.setPlistBody(plist, format: format, options: options)
                 break
-//            case .plist(let plist):
-//                try builder.setPlistObject(plist as? Encodable)
-//            break
+                //            case .plist(let plist):
+                //                try builder.setPlistObject(plist as? Encodable)
+            //            break
             case .multipartFormData(let data):
                 try builder.setMultipartFormData(data)
                 break
             }
         }
+        return builder.build()
+    }
+    
+    @discardableResult
+    public func request(_ dispatch: LeafDispatch,
+                        method: LeafRequest.LeafMethod,
+                        timeout: TimeInterval = 120,
+                        progress: LeafTask.ProgressClosure? = nil,
+                        success: LeafTask.SuccessClosure?,
+                        failure: LeafTask.FailureClosure?) throws -> Leaf {
         
-        let task = self.session.dataTask(builder.build()).progress(progress)
+        let request = try self.build(method: method, timeout: timeout)
+        let task = self.session.dataTask(request)
+        task.progress(progress)
+        
+        let k = dumping(self)
+        Leaf.leafs[k] = self
         
         switch dispatch {
         case .asynchronously:
-            task.async(success: success, failure: failure)
+            task.async(success: {
+                success?($0)
+                Leaf.leafs.removeValue(forKey: k)
+            }, failure: {
+                failure?($0)
+                Leaf.leafs.removeValue(forKey: k)
+            })
             break
         case .synchronously:
             do {
-                success?(try task.sync())
+                let response = try task.sync()
+                success?(response)
             } catch {
                 if let le = error as? LeafError {
                     failure?(le)
                 } else {
-                    failure?(LeafError.leafError(from: error))
+                    let le = LeafError.leafError(from: error)
+                    failure?(le)
                 }
             }
+            Leaf.leafs.removeValue(forKey: k)
             break
         }
         
@@ -127,48 +172,12 @@ public extension Leaf {
     }
 }
 
-//// MARK: - Static Methods - Requests
-public extension Leaf {
-    @discardableResult
-    public static func request(_ url: URL,
-                               _ dispatch: LeafDispatch,
-                               method: LeafRequest.LeafMethod,
-                               parameters: [String: Any]?,
-                               headers: [String: String]? = nil,
-                               cachePolicy: LeafRequest.LeafCachePolicy = .reloadIgnoringLocalCacheData,
-                               timeout: TimeInterval = 120,
-                               body bodyType: LeafBodyType? = nil,
-                               progress: LeafTask.ProgressClosure? = nil,
-                               success: LeafTask.SuccessClosure?,
-                               failure: LeafTask.FailureClosure?) throws -> Leaf {
-        return try Leaf.init(url, parameters: parameters, headers: headers, cachePolicy: cachePolicy, body: bodyType).request(dispatch, method: method, timeout: timeout, progress: progress, success: success, failure: failure)
+public func dumping(_ item: Any?) -> String {
+    var output = ""
+    guard let i = item else {
+        dump(item, to: &output)
+        return output
     }
-    
-    @discardableResult
-    public static func async(_ method: LeafRequest.LeafMethod,
-                             _ url: URL,
-                             parameters: [String: Any]?,
-                             headers: [String: String]? = nil,
-                             cachePolicy: LeafRequest.LeafCachePolicy = .reloadIgnoringLocalCacheData,
-                             timeout: TimeInterval = 120,
-                             body bodyType: LeafBodyType? = nil,
-                             progress: LeafTask.ProgressClosure? = nil,
-                             success: LeafTask.SuccessClosure?,
-                             failure: LeafTask.FailureClosure?) throws -> Leaf {
-        return try Leaf.init(url, parameters: parameters, headers: headers, cachePolicy: cachePolicy, body: bodyType).request(.asynchronously, method: method, timeout: timeout, progress: progress, success: success, failure: failure)
-    }
-    
-    @discardableResult
-    public static func sync(_ method: LeafRequest.LeafMethod,
-                            _ url: URL,
-                            parameters: [String: Any]?,
-                            headers: [String: String]? = nil,
-                            cachePolicy: LeafRequest.LeafCachePolicy = .reloadIgnoringLocalCacheData,
-                            timeout: TimeInterval = 120,
-                            body bodyType: LeafBodyType? = nil,
-                            progress: LeafTask.ProgressClosure? = nil,
-                            success: LeafTask.SuccessClosure?,
-                            failure: LeafTask.FailureClosure?) throws -> Leaf {
-        return try Leaf.init(url, parameters: parameters, headers: headers, cachePolicy: cachePolicy, body: bodyType).request(.synchronously, method: method, timeout: timeout, progress: progress, success: success, failure: failure)
-    }
+    dump(i, to: &output)
+    return output
 }

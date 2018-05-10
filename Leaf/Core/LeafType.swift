@@ -10,7 +10,7 @@ import Foundation
 
 public let kLeafSymbol = "🍃"
 
-public typealias RequestInterceptor = (LeafRequest.Builder) -> LeafRequest.Builder
+public typealias RequestInterceptor = (LeafBuilder) -> LeafBuilder
 
 public typealias ResponseInterceptor = (LeafResponse.Builder) -> LeafResponse.Builder
 

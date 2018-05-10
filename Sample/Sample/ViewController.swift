@@ -36,7 +36,7 @@ enum SampleType: String {
 
 class ViewController: UITableViewController {
 
-    let leaf: Leafable = LeafURLSession.shared
+    let session: Leafable = LeafURLSession.shared
 //    let url = "http://10.9.175.248:8080/about.json"
     let url = "https://meniny.cn/api/v2/about.json"
     lazy var request: LeafRequest = {
@@ -126,7 +126,9 @@ class ViewController: UITableViewController {
     func _async_portfolio(_ jsonName: String) {
         let u = "https://meniny.cn/api/v2/\(jsonName).json"
         if let r = LeafRequest.init(u) {
-            leaf.dataTask(r).async(success: { (response) in
+            session.dataTask(r).progress({ (progress) in
+                print(progress)
+            }).async(success: { (response) in
                 do {
                     if let result: Portfolio = try response.decode() {
                         self.display("\(result)")
@@ -145,7 +147,9 @@ class ViewController: UITableViewController {
     // Asynchronous
     func _async(url u: String) {
         if let r = LeafRequest.init(u) {
-            leaf.dataTask(r).async(success: { (response) in
+            session.dataTask(r).progress({ (progress) in
+                print(progress)
+            }).async(success: { (response) in
                 do {
                     if let object: [AnyHashable: Any] = try response.object() {
                         self.display("Asynchronous: \(object)")
@@ -164,7 +168,9 @@ class ViewController: UITableViewController {
         // Synchronous
         do {
             let date = Date()
-            let object: [AnyHashable: Any] = try leaf.dataTask(request).sync().object()
+            let object: [AnyHashable: Any] = try session.dataTask(request).progress({ (progress) in
+                print(progress)
+            }).sync().object()
             self.display("Synchronous: \(object)\n Time: \(Date().timeIntervalSince(date))")
         } catch {
             self.display("Synchronous: Error: \(error)")
@@ -175,7 +181,9 @@ class ViewController: UITableViewController {
     @objc
     func sample_decode() {
         // Decode
-        leaf.dataTask(self.request).async(success: { (response) in
+        session.dataTask(self.request).progress({ (progress) in
+            print(progress)
+        }).async(success: { (response) in
             do {
                 if let result: AboutResponse = try response.decode() {
                     self.display(result.about.joined(separator: "\n------\n"))
@@ -192,7 +200,7 @@ class ViewController: UITableViewController {
         let u = URL.init(string: self.url)!
         
         do {
-            try Leaf.init(u, parameters: ["lan": "en-US"]).request(.asynchronously, method: .GET, progress: { progress in
+            try Leaf.init(u, parameters: ["lan": "en-US"]).request(.asynchronously, method: .GET, progress: { (progress) in
                 print(progress)
             }, success: { (response) in
                 do {

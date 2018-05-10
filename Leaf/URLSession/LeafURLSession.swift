@@ -8,7 +8,11 @@
 
 import Foundation
 
-open class LeafURLSession: Leafable {
+open class LeafURLSession: Leafable, Equatable {
+    
+    public static func == (lhs: LeafURLSession, rhs: LeafURLSession) -> Bool {
+        return lhs.session == rhs.session
+    }
     
     open static var shared: Leafable {
         return self.default
@@ -28,7 +32,7 @@ open class LeafURLSession: Leafable {
         return URLCache(memoryCapacity: defaultMemoryCapacity, diskCapacity: defaultDiskCapacity, diskPath: defaultDiskPath)
     }()
 
-    open private(set) var session: URLSession!
+    open internal(set) var session: URLSession!
 
     open var delegate: URLSessionDelegate? { return session.delegate }
 
@@ -182,12 +186,12 @@ extension LeafURLSession {
             }
             leafTask?.resume()
         } else {
-            leafTask?.dispatchSemaphore?.signal()
             if let lr = leafResponse {
                 leafTask?.successClosure?(lr)
             } else {
                 leafTask?.failureClosure?(leafError ?? LeafError.unknown)
             }
+            leafTask?.dispatchSemaphore?.signal()
         }
     }
 
