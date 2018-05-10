@@ -14,7 +14,7 @@ enum SampleType: String {
     case async_portfolio  = "Asynchronous Portfolio"
     case sync   = "Synchronous"
     case decode = "Decode"
-//    case hunterAsync = "LeafHunter-Asynchronous"
+    case leafAsync = "Leaf-Asynchronous"
     
     var selector: Selector {
         switch self {
@@ -26,17 +26,17 @@ enum SampleType: String {
             return #selector(ViewController.sample_sync)
         case .decode:
             return #selector(ViewController.sample_decode)
-//        case .hunterAsync:
-//            return #selector(ViewController.sample_gh_async)
+        case .leafAsync:
+            return #selector(ViewController.sample_leaf_async)
         }
     }
     
-    static let all: [SampleType] = [.async, .async_portfolio, .sync, .decode]//, .hunterAsync]
+    static let all: [SampleType] = [.async, .async_portfolio, .sync, .decode, .leafAsync]
 }
 
 class ViewController: UITableViewController {
 
-    let leaf: LeafType = LeafURLSession.shared
+    let leaf: Leafable = LeafURLSession.shared
 //    let url = "http://10.9.175.248:8080/about.json"
     let url = "https://meniny.cn/api/v2/about.json"
     lazy var request: LeafRequest = {
@@ -126,17 +126,17 @@ class ViewController: UITableViewController {
     func _async_portfolio(_ jsonName: String) {
         let u = "https://meniny.cn/api/v2/\(jsonName).json"
         if let r = LeafRequest.init(u) {
-            leaf.dataTask(r).async { (response, error) in
+            leaf.dataTask(r).async(success: { (response) in
                 do {
-                    if let result: Portfolio = try response?.decode() {
+                    if let result: Portfolio = try response.decode() {
                         self.display("\(result)")
-                    } else if let error = error {
-                        self.display("Asynchronous: LeafType error: \(error)")
                     }
                 } catch {
                     self.display("Asynchronous: Parse error: \(error.localizedDescription)")
                 }
-            }
+            }, failure: { (error) in
+                self.display("Asynchronous: Leaf error: \(error)")
+            })
         } else {
             self.display("Asynchronous: Error: \(u)")
         }
@@ -145,17 +145,17 @@ class ViewController: UITableViewController {
     // Asynchronous
     func _async(url u: String) {
         if let r = LeafRequest.init(u) {
-            leaf.dataTask(r).async { (response, error) in
+            leaf.dataTask(r).async(success: { (response) in
                 do {
-                    if let object: [AnyHashable: Any] = try response?.object() {
+                    if let object: [AnyHashable: Any] = try response.object() {
                         self.display("Asynchronous: \(object)")
-                    } else if let error = error {
-                        self.display("Asynchronous: LeafType error: \(error)")
                     }
                 } catch {
                     self.display("Asynchronous: Parse error: \(error.localizedDescription)")
                 }
-            }
+            }, failure: { (error) in
+                self.display("Asynchronous: Leaf error: \(error)")
+            })
         }
     }
     
@@ -175,40 +175,40 @@ class ViewController: UITableViewController {
     @objc
     func sample_decode() {
         // Decode
-        leaf.dataTask(request).async { (response, error) in
+        leaf.dataTask(self.request).async(success: { (response) in
             do {
-                if let result: AboutResponse = try response?.decode() {
+                if let result: AboutResponse = try response.decode() {
                     self.display(result.about.joined(separator: "\n------\n"))
-                } else if let error = error {
-                    self.display("Decode: LeafType error: \(error)")
                 }
             } catch {
                 self.display("Decode: Parse error: \(error)")
             }
-        }
+        }, failure: { (error) in
+            self.display("Decode: Leaf error: \(error)")
+        })
     }
     
-//    @objc func sample_gh_async() {
-//        let u = URL.init(string: self.url)!
-//
-//        do {
-//            try LeafHunter.async(.GET, url: u, parameters: nil, headers: nil, progress: { (pregress) in
-//                print(pregress)
-//            }, completion: { (response, error) in
-//                do {
-//                    if let result: AboutResponse = try response?.decode() {
-//                        self.display(result.about.joined(separator: "\n------\n"))
-//                    } else if let error = error {
-//                        self.display("NightWatch Asynchronous: LeafType error: \(error)")
-//                    }
-//                } catch {
-//                    self.display("NightWatch: Parse error: \(error)")
-//                }
-//            })
-//        } catch {
-//            self.display("NightWatch: Request error: \(error)")
-//        }
-//    }
+    @objc func sample_leaf_async() {
+        let u = URL.init(string: self.url)!
+        
+        do {
+            try Leaf.init(u, parameters: ["lan": "en-US"]).request(.asynchronously, method: .GET, progress: { progress in
+                print(progress)
+            }, success: { (response) in
+                do {
+                    if let result: AboutResponse = try response.decode() {
+                        self.display(result.about.joined(separator: "\n------\n"))
+                    }
+                } catch {
+                    self.display("Leaf: Parse error: \(error)")
+                }
+            }, failure: { (error) in
+                self.display("Leaf Asynchronous: Leaf error: \(error)")
+            })
+        } catch {
+            self.display("Leaf: Request error: \(error)")
+        }
+    }
     
     func display(_ portfolio: ProtfolioResponse, function: String = #function) {
         DispatchQueue.main.async {

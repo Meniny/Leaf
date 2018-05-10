@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 #if !os(watchOS)
 @available(iOS 9.0, macOS 10.11, *)
 extension LeafURLSession {

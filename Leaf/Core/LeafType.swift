@@ -14,9 +14,9 @@ public typealias RequestInterceptor = (LeafRequest.Builder) -> LeafRequest.Build
 
 public typealias ResponseInterceptor = (LeafResponse.Builder) -> LeafResponse.Builder
 
-public protocol LeafType: class {
+public protocol Leafable: class {
 
-    static var shared: LeafType { get }
+    static var shared: Leafable { get }
 
     var requestInterceptors: [RequestInterceptor] { get set }
 

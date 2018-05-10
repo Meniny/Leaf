@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.framework        = 'Foundation'
   s.module_name      = 'Leaf'
-  s.default_subspecs = 'Core', 'URLSession'
+  s.default_subspecs = 'Core', 'URLSession', 'Simple'
 
   s.subspec 'Core' do |ss|
     ss.source_files  = "Leaf/Core/*.{h,swift}"
@@ -27,5 +27,11 @@ Pod::Spec.new do |s|
   s.subspec 'URLSession' do |ss|
     ss.dependency 'Leaf/Core'
     ss.source_files  = "Leaf/URLSession/*.{h,swift}"
+  end
+
+  s.subspec 'Simple' do |ss|
+    ss.dependency 'Leaf/Core'
+    ss.dependency 'Leaf/URLSession'
+    ss.source_files  = "Leaf/Simple/*.{h,swift}"
   end
 end

@@ -27,8 +27,6 @@ public enum LeafError: Error {
             return u
         case .parse(code: _, message: _, object: _, underlying: let u):
             return u
-//        case .response(code: _, message: _, underlying: let u):
-//            return u
         }
     }
     
@@ -38,8 +36,6 @@ public enum LeafError: Error {
             return m ?? localizedDescription
         case .parse(code: _, message: let m, object: _, underlying: _):
             return m ?? localizedDescription
-//        case .response(code: _, message: let m, underlying: _):
-//            return m ?? localizedDescription
         }
     }
     
@@ -60,8 +56,6 @@ extension LeafError {
             return try objectTransformation(code, object, underlying)
         case .parse(let code, _, let object, let underlying):
             return try objectTransformation(code, object, underlying)
-//        case .response(let code, _, let underlying):
-//            return try objectTransformation(code, nil, underlying)
         }
     }
 
@@ -71,8 +65,6 @@ extension LeafError {
             return try decodeTransformation(code, object, underlying)
         case .parse(let code, _, let object, let underlying):
             return try decodeTransformation(code, object, underlying)
-//        case .response(let code, _, let underlying):
-//            return try decodeTransformation(code, nil, underlying)
         }
     }
 
@@ -107,7 +99,7 @@ extension LeafError {
 
     public var localizedDescription: String {
         switch self {
-        case .leaf(_, let message, _, _, let underlying), .parse(_, let message, _, let underlying)://, .response(code: _, let message, let underlying):
+        case .leaf(_, let message, _, _, let underlying), .parse(_, let message, _, let underlying):
             if let localizedDescription = underlying?.localizedDescription, localizedDescription != message {
                 return message + " " + localizedDescription
             }
@@ -129,7 +121,7 @@ extension LeafError: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         switch self {
-        case .leaf(let code, _, _, _, _), .parse(let code, _, _, _)://, .response(let code, _, _):
+        case .leaf(let code, _, _, _, _), .parse(let code, _, _, _):
             if let code = code?.description {
                 return code + " " + localizedDescription
             }
@@ -154,7 +146,7 @@ extension LeafError: CustomNSError {
 
     public var errorUserInfo: [String : Any] {
         switch self {
-        case .leaf(_, let message, _, _, let underlying), .parse(_, let message, _, let underlying)://, .response(_, let message, let underlying):
+        case .leaf(_, let message, _, _, let underlying), .parse(_, let message, _, let underlying):
             guard let underlying = underlying else {
                 return [NSLocalizedDescriptionKey: localizedDescription, NSLocalizedFailureReasonErrorKey: message]
             }
@@ -166,10 +158,6 @@ extension LeafError: CustomNSError {
 }
 
 public extension LeafError {
-//    public static func responseError(from error: Error?, code: Int) -> LeafError {
-//        return LeafError.response(code: code, message: error?.localizedDescription ?? "Response Error", underlying: error)
-//    }
-    
     public static func leafError(from error: Error) -> LeafError {
         return LeafError.leaf(code: error._code,
                                 message: error.localizedDescription,

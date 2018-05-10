@@ -117,12 +117,28 @@ You are welcome to fork and submit pull requests.
 [source, swift, subs="verbatim,attributes"]
 ----
 import {name}
+
+do {
+    let url = URL(string: "https://domain.com/someapi")!
+    try Leaf.init(url, parameters: ["lan": "en-US"]).request(.asynchronously, method: .GET, progress: { progress in
+        // ...
+    }, success: { (response) in
+        // ...
+    }, failure: { (error) in
+        // ...
+    })
+} catch {
+    // ...
+}
 ----
+
+== ⚙️ Advanced
 
 === Build a LeafRequest
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 do {
     let request = try LeafRequest.builder("https://domain.com/someapi")!
@@ -140,80 +156,77 @@ do {
                 .setHeaders(["foo": "bar"])
                 .build()
 } catch {
-    print("Request error: \(error)")
+
 }
-```
+----
 
 === Request asynchronously
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
-Leaf.dataTask(URL(string: "https://domain.com/someapi")!).async { (response, error) in
-    do {
-        if let object: [AnyHashable: Any] = try response?.object() {
-            print("Response dictionary: \(object)")
-        } else if let error = error {
-            print("Net error: \(error)")
-        }
-    } catch {
-        print("Parse error: \(error)")
-    }
-}
-```
+Leaf.dataTask(URL(string: "https://domain.com/someapi")!).async(success: { (response) in
+
+}, failure: { (error) in
+
+})
+----
 
 === Request synchronously
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
 do {
     let object: [AnyHashable: Any] = try Leaf.dataTask("https://domain.com/someapi").sync().object()
-    print("Response dictionary: \(object)")
 } catch {
-    print("Error: \(error)")
+
 }
-```
+----
 
 === Request from cache
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
 do {
     let object: [AnyHashable: Any] = try Leaf.dataTask("https://domain.com/someapi").cached().object()
-    print("Response dictionary: \(object)")
+
 } catch {
-    print("Error: \(error)")
+
 }
-```
+----
 
 === Track progress
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
 do {
     let task = try Leaf.dataTask("https://domain.com/someapi").progress({ progress in
-        print(progress)
     }).sync()
 } catch {
-    print("Error: \(error)")
+
 }
-```
+----
 
 === Add interceptors for all requests
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
@@ -222,12 +235,13 @@ Leaf.addRequestInterceptor { request in
     request.setBearerAuthorization(token: "token")
     return request
 }
-```
+----
 
 === Retry requests
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = LeafURLSession()
 
@@ -238,33 +252,35 @@ do {
         return retryCount < 2
     }).sync()
 } catch {
-    print("Error: \(error)")
-}
-```
 
-## 🧙‍♂️ Codable
+}
+----
+
+== 🧙‍♂️ Codable
 
 === Encodable
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let request = LeafRequest.builder("https://domain.com/someapi")!
             .setJSONObject(Encodable())
             .build()
-```
+----
 
 === Decodable
 
-```swift
-import Leaf
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
 
 let Leaf = URLSession()
 
 do {
     let object: Decodable = try Leaf.dataTask("https://domain.com/someapi").sync().decode()
-    print("Response object: \(object)")
+
 } catch {
-    print("Error: \(error)")
+
 }
-```
+----
