@@ -1,0 +1,269 @@
+:name: LeafType
+:author: Elias Abel
+:mail: admin@meniny.cn
+:desc: a versatile HTTP(s) networking framework written in Swift
+:version: 1.0.0
+:na: N/A
+:ios: 8.0
+:macos: 10.9
+:watchos: 2.0
+:tvos: 9.0
+:linux: {na}
+:xcode: 9.3
+:swift: 4.1
+:license: MIT
+:sep: %20%7C%20
+:platform: iOS{sep}macOS{sep}watchOS{set}tvOS
+= Meet `{name}`
+{author} <{mail}>
+v{version}, 2018-05-10
+
+[subs="attributes"]
+++++
+<p align="center">
+  <img src="./Assets/{name}.png" alt="{name}">
+  <br/><br/>
+  <img alt="Author" src="https://img.shields.io/badge/author-Elias%20Abel-blue.svg">
+  <img alt="EMail" src="https://img.shields.io/badge/mail-admin@meniny.cn-orange.svg">
+  <img alt="MIT" src="https://img.shields.io/badge/license-{license}-blue.svg">
+  <br/>
+  <img alt="Version" src="https://img.shields.io/badge/version-{version}-brightgreen.svg">
+  <img alt="Platforms" src="https://img.shields.io/badge/platform-{platform}-lightgrey.svg">
+  <img alt="Swift" src="https://img.shields.io/badge/swift-{swift}%2B-orange.svg">
+  <br/>
+  <img alt="Build Passing" src="https://img.shields.io/badge/build-passing-brightgreen.svg">
+  <img alt="Cocoapods" src="https://img.shields.io/badge/cocoapods-compatible-brightgreen.svg">
+  <img alt="Carthage" src="https://img.shields.io/badge/carthage-compatible-brightgreen.svg">
+  <img alt="SPM" src="https://img.shields.io/badge/spm-compatible-brightgreen.svg">
+</p>
+++++
+
+:toc:
+
+== 🏵 Introduction
+
+**{name}** is {desc}.
+
+## 🌟 Features
+
+- [x] Chainable Request / Response Methods
+- [x] Asynchronous & synchronous task execution
+- [x] Basic, Bearer & Custom Authorization Handling
+- [x] `URL` / `JSON` / `Property List` Parameter Encoding
+- [x] Upload File / `Data` / `Stream` / `Multipart Form Data`
+- [x] Download File using Request / Resume Data
+- [x] Authentication with `URLCredential`
+- [x] Custom Cache Controls
+- [x] Custom Content Types
+- [x] Upload & Download Progress Closures
+- [x] `cURL` Command Debug Output
+- [x] Request & Response Interceptors
+- [x] Inference of response object type
+- [x] Network reachability
+- [x] `TLS Certificate` & `Public Key Pinning`
+- [x] Retry requests
+- [x] `Codable` protocols compatible (`JSON` / `Property List`)
+- [x] `watchOS` Compatible
+- [x] `tvOS` Compatible
+- [x] `macOS` Compatible
+
+== 📋 Requirements
+
+[%header]
+|===
+2+^m|Type 1+^m|Requirement
+
+1.5+^.^|Platform ^|iOS ^|{ios}+
+^|macOS ^e|{macos}
+^|tvOS ^e|{tvos}
+^|watchOS ^e|{watchos}
+^|Linux ^e|{linux}
+
+^|IDE ^|Xcode ^| {xcode}+
+^|Language ^|Swift ^| {swift}+
+|===
+
+== 📲 Installation
+
+=== CocoaPods
+
+`{name}` is available on link:https://cocoapods.org[CocoaPods].
+
+[source, ruby, subs="verbatim,attributes"]
+----
+use_frameworks!
+pod '{name}'
+----
+
+=== Manually
+
+Copy all files in the `{name}` directory into your project.
+
+== 🛌 Dependency
+
+{na}
+
+== ❤️ Contribution
+
+You are welcome to fork and submit pull requests.
+
+== 🔖 License
+
+`{name}` is open-sourced software, licensed under the link:./LICENSE.md[`{license}`] license.
+
+== 🔫 Usage
+
+[source, swift, subs="verbatim,attributes"]
+----
+import {name}
+----
+
+=== Build a LeafRequest
+
+```swift
+import Leaf
+
+do {
+    let request = try LeafRequest.builder("https://domain.com/someapi")!
+                .setAccept(.json)
+                .setCache(.reloadIgnoringLocalCacheData)
+                .setMethod(.PATCH)
+                .setTimeout(20)
+                .setJSONBody(["foo", "bar"])
+                .setContentType(.json)
+                .setServiceType(.background)
+                .setCacheControls([.maxAge(500)])
+                .setURLParameters(["foo": "bar"])
+                .setAcceptEncodings([.gzip, .deflate])
+                .setBasicAuthorization(user: "user", password: "password")
+                .setHeaders(["foo": "bar"])
+                .build()
+} catch {
+    print("Request error: \(error)")
+}
+```
+
+=== Request asynchronously
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+Leaf.dataTask(URL(string: "https://domain.com/someapi")!).async { (response, error) in
+    do {
+        if let object: [AnyHashable: Any] = try response?.object() {
+            print("Response dictionary: \(object)")
+        } else if let error = error {
+            print("Net error: \(error)")
+        }
+    } catch {
+        print("Parse error: \(error)")
+    }
+}
+```
+
+=== Request synchronously
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+do {
+    let object: [AnyHashable: Any] = try Leaf.dataTask("https://domain.com/someapi").sync().object()
+    print("Response dictionary: \(object)")
+} catch {
+    print("Error: \(error)")
+}
+```
+
+=== Request from cache
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+do {
+    let object: [AnyHashable: Any] = try Leaf.dataTask("https://domain.com/someapi").cached().object()
+    print("Response dictionary: \(object)")
+} catch {
+    print("Error: \(error)")
+}
+```
+
+=== Track progress
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+do {
+    let task = try Leaf.dataTask("https://domain.com/someapi").progress({ progress in
+        print(progress)
+    }).sync()
+} catch {
+    print("Error: \(error)")
+}
+```
+
+=== Add interceptors for all requests
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+Leaf.addRequestInterceptor { request in
+    request.addHeader("foo", value: "bar")
+    request.setBearerAuthorization(token: "token")
+    return request
+}
+```
+
+=== Retry requests
+
+```swift
+import Leaf
+
+let Leaf = LeafURLSession()
+
+Leaf.retryClosure = { response, _, _ in response?.statusCode == XXX }
+
+do {
+    let task = try Leaf.dataTask("https://domain.com/someapi").retry({ response, error, retryCount in
+        return retryCount < 2
+    }).sync()
+} catch {
+    print("Error: \(error)")
+}
+```
+
+## 🧙‍♂️ Codable
+
+=== Encodable
+
+```swift
+import Leaf
+
+let request = LeafRequest.builder("https://domain.com/someapi")!
+            .setJSONObject(Encodable())
+            .build()
+```
+
+=== Decodable
+
+```swift
+import Leaf
+
+let Leaf = URLSession()
+
+do {
+    let object: Decodable = try Leaf.dataTask("https://domain.com/someapi").sync().decode()
+    print("Response object: \(object)")
+} catch {
+    print("Error: \(error)")
+}
+```
