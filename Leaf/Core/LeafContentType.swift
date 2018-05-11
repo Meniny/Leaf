@@ -12,6 +12,8 @@ public enum LeafContentType {
     case aac, avi, bin, bmp, csv, form, formURL, gif, html, ico, ics, jpeg, js, json, mpeg, mpkg, ogx, pdf, pkcs7, plist, png, rar, rtf, svg, tar, tiff, ttf, txt, wav, weba, webm, webp, wildcard, xhtml, xml, zip, custom(String)
 }
 
+extension LeafContentType: Equatable {}
+
 extension LeafContentType: RawRepresentable {
 
     private struct StringValue {

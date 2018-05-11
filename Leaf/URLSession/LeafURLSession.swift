@@ -8,9 +8,13 @@
 
 import Foundation
 
-open class LeafURLSession: LeafType {
+open class LeafURLSession: Leafable, Equatable {
     
-    open static var shared: LeafType {
+    public static func == (lhs: LeafURLSession, rhs: LeafURLSession) -> Bool {
+        return lhs.session == rhs.session
+    }
+    
+    open static var shared: Leafable {
         return self.default
     }
 
@@ -28,7 +32,7 @@ open class LeafURLSession: LeafType {
         return URLCache(memoryCapacity: defaultMemoryCapacity, diskCapacity: defaultDiskCapacity, diskPath: defaultDiskPath)
     }()
 
-    open private(set) var session: URLSession!
+    open internal(set) var session: URLSession!
 
     open var delegate: URLSessionDelegate? { return session.delegate }
 
@@ -159,7 +163,10 @@ extension LeafURLSession {
     func process(_ leafTask: LeafTask?, _ leafResponse: LeafResponse?, _ leafError: LeafError?) {
         leafTask?.response = leafResponse
         leafTask?.error = leafError
-        if let request = leafTask?.request, let retryCount = leafTask?.retryCount, leafTask?.retryClosure?(leafResponse, leafError, retryCount) == true || retryClosure?(leafResponse, leafError, retryCount) == true {
+        
+        if let request = leafTask?.request, let retryCount = leafTask?.retryCount,
+            (leafTask?.retryClosure?(leafResponse, leafError, retryCount) == true || retryClosure?(leafResponse, leafError, retryCount) == true) {
+            
             let retryTask = self.dataTask(request)
             leafTask?.leafTask = retryTask.leafTask
             leafTask?.state = .suspended
@@ -169,14 +176,22 @@ extension LeafURLSession {
                 leafTask?.progress = progress
                 leafTask?.progressClosure?(progress)
             }
-            retryTask.completionClosure = { response, error in
+            retryTask.successClosure = { response in
                 leafTask?.metrics = retryTask.metrics
-                self.process(leafTask, response, error)
+                self.process(leafTask, response, nil)
+            }
+            retryTask.failureClosure = { error in
+                leafTask?.metrics = retryTask.metrics
+                self.process(leafTask, nil, error)
             }
             leafTask?.resume()
         } else {
+            if let lr = leafResponse {
+                leafTask?.successClosure?(lr)
+            } else {
+                leafTask?.failureClosure?(leafError ?? LeafError.unknown)
+            }
             leafTask?.dispatchSemaphore?.signal()
-            leafTask?.completionClosure?(leafResponse, leafError)
         }
     }
 

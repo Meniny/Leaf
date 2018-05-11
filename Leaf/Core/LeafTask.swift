@@ -64,11 +64,17 @@ open class LeafTask {
 
     fileprivate(set) var dispatchSemaphore: DispatchSemaphore?
 
-    var completionClosure: CompletionClosure?
+    public typealias SuccessClosure = (LeafResponse) -> Swift.Void
+    public typealias FailureClosure = (LeafError) -> Swift.Void
+    public typealias RetryClosure = (LeafResponse?, LeafError?, UInt) -> Bool
+    public typealias ProgressClosure = (Progress) -> Swift.Void
+    
+    var successClosure: LeafTask.SuccessClosure?
+    var failureClosure: LeafTask.FailureClosure?
 
-    fileprivate(set) var retryClosure: RetryClosure?
+    fileprivate(set) var retryClosure: LeafTask.RetryClosure?
 
-    var progressClosure: ProgressClosure?
+    var progressClosure: LeafTask.ProgressClosure?
 
     public init(_ identifier: LeafTaskIdentifier? = nil, request: LeafRequest? = nil , response: LeafResponse? = nil, taskDescription: String? = nil, state: LeafState = .suspended, error: LeafError? = nil, priority: Float? = nil, progress: Progress? = nil, metrics: LeafTaskMetrics? = nil, task: LeafTaskProtocol? = nil) {
         self.request = request
@@ -78,18 +84,19 @@ open class LeafTask {
         self.state = state
         self.error = error
         self.priority = priority
-        if let progress = progress {
-            self.progress = progress
-        } else if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *), let progress = task?.progress {
-            self.progress = progress
+        if let p = progress {
+            self.progress = p
+        } else if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *), let p = task?.progress {
+            self.progress = p
         } else {
-            self.progress = Progress(totalUnitCount: Int64(request?.contentLength ?? 0))
+            self.progress = Progress.init(totalUnitCount: Int64(request?.contentLength ?? 0))
         }
         self.leafTask = task
     }
 
     deinit {
-        completionClosure = nil
+        successClosure = nil
+        failureClosure = nil
         progressClosure = nil
         retryClosure = nil
     }
@@ -98,14 +105,12 @@ open class LeafTask {
 
 extension LeafTask {
 
-    public typealias CompletionClosure = (LeafResponse?, LeafError?) -> Swift.Void
-    public typealias RetryClosure = (LeafResponse?, LeafError?, UInt) -> Bool
-
-    @discardableResult open func async(_ completion: CompletionClosure? = nil) -> Self {
+    @discardableResult open func async(success: LeafTask.SuccessClosure?, failure: LeafTask.FailureClosure?) -> Self {
         guard state == .suspended else {
             return self
         }
-        completionClosure = completion
+        successClosure = success
+        failureClosure = failure
         resume()
         return self
     }
@@ -154,18 +159,15 @@ extension LeafTask {
         throw taskError
     }
 
-    @discardableResult open func retry(_ retry: @escaping RetryClosure) -> Self {
+    @discardableResult open func retry(_ retry: LeafTask.RetryClosure?) -> Self {
         retryClosure = retry
         return self
     }
-
 }
 
 extension LeafTask {
 
-    public typealias ProgressClosure = (Progress) -> Swift.Void
-
-    @discardableResult open func progress(_ progressClosure: ProgressClosure?) -> Self {
+    @discardableResult open func progress(_ progressClosure: LeafTask.ProgressClosure?) -> Self {
         self.progressClosure = progressClosure
         return self
     }

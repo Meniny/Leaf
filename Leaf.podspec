@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Leaf'
-  s.version          = '1.0.0'
+  s.version          = '1.1.0'
   s.summary          = 'Versatile HTTP networking framework written in Swift.'
 
   s.homepage         = 'https://github.com/Meniny/Leaf'
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.framework        = 'Foundation'
   s.module_name      = 'Leaf'
-  s.default_subspecs = 'Core', 'URLSession'
+  s.default_subspecs = 'Core', 'URLSession', 'Simple'
 
   s.subspec 'Core' do |ss|
     ss.source_files  = "Leaf/Core/*.{h,swift}"
@@ -29,10 +29,18 @@ Pod::Spec.new do |s|
     ss.source_files  = "Leaf/URLSession/*.{h,swift}"
   end
 
+  s.subspec 'Simple' do |ss|
+    ss.dependency 'Leaf/Core'
+    ss.dependency 'Leaf/URLSession'
+    ss.source_files  = "Leaf/Simple/*.{h,swift}"
+  end
+
   s.subspec 'Promise' do |ss|
     ss.dependency 'Leaf/Core'
     ss.dependency 'Leaf/URLSession'
+    ss.dependency 'Leaf/Simple'
     ss.dependency 'Oath'
     ss.source_files  = "Leaf/Promise/*.{h,swift}"
   end
+
 end

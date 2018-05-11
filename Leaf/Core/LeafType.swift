@@ -10,13 +10,13 @@ import Foundation
 
 public let kLeafSymbol = "🍃"
 
-public typealias RequestInterceptor = (LeafRequest.Builder) -> LeafRequest.Builder
+public typealias RequestInterceptor = (LeafBuilder) -> LeafBuilder
 
 public typealias ResponseInterceptor = (LeafResponse.Builder) -> LeafResponse.Builder
 
-public protocol LeafType: class {
+public protocol Leafable: class {
 
-    static var shared: LeafType { get }
+    static var shared: Leafable { get }
 
     var requestInterceptors: [RequestInterceptor] { get set }
 

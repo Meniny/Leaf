@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 extension LeafURLSession {
 
     open func uploadTask(_ streamedRequest: LeafRequest) -> LeafTask {

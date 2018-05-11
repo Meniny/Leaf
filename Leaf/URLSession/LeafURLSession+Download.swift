@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 extension LeafURLSession {
 
     open func downloadTask(_ resumeData: Data) -> LeafTask {

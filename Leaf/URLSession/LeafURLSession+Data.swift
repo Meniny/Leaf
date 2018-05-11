@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 extension LeafURLSession {
 
     open func dataTask(_ request: LeafRequest) -> LeafTask {
