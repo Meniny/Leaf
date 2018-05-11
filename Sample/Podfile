@@ -3,6 +3,6 @@ inhibit_all_warnings!
 
 target 'Sample' do
     platform :ios, '8.0'
-#    pod 'Leaf', :path => '../'
-    pod 'Leaf/Promise', :path => '../'
+    pod 'Leaf', :path => '../'
+    # pod 'Leaf/Promise', :path => '../'
 end

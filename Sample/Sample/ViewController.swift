@@ -224,17 +224,17 @@ class ViewController: UITableViewController {
         
         do {
             let leaf = Leaf.init(u, parameters: ["lan": "en-US"])
-            leaf.request(.GET).then { response in
-                do {
-                    if let result: AboutResponse = try response.decode() {
-                        self.display(result.about.joined(separator: "\n------\n"))
-                    }
-                } catch {
-                    self.display("Leaf: Parse error: \(error)")
-                }
-                }.onError({ (error) in
-                    self.display("Leaf Asynchronous: Leaf error: \(error)")
-                })
+//            leaf.request(.GET).then { response in
+//                do {
+//                    if let result: AboutResponse = try response.decode() {
+//                        self.display(result.about.joined(separator: "\n------\n"))
+//                    }
+//                } catch {
+//                    self.display("Leaf: Parse error: \(error)")
+//                }
+//                }.onError({ (error) in
+//                    self.display("Leaf Asynchronous: Leaf error: \(error)")
+//                })
             try leaf.async(.GET, progress: { (progress) in
                 print(progress)
             }, success: { (response) in

@@ -139,21 +139,21 @@ do {
     // ...
 }
 ----
-
-=== Promise
-
-[source, swift, subs="verbatim,attributes"]
-----
-import {name}
-
-do {
-let url = URL(string: "https://domain.com/someapi")!
-Leaf.init(u, parameters: ["lan": "en-US"]).request(.GET).then { response in
-    // ...
-}.onError({ (error) in
-    // ...
-})
-----
+// 
+// === Promise
+//
+// [source, swift, subs="verbatim,attributes"]
+// ----
+// import {name}
+//
+// do {
+// let url = URL(string: "https://domain.com/someapi")!
+// Leaf.init(u, parameters: ["lan": "en-US"]).request(.GET).then { response in
+//     // ...
+// }.onError({ (error) in
+//     // ...
+// })
+// ----
 
 == ⚙️ Advanced
 
