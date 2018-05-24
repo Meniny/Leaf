@@ -8,7 +8,6 @@
 
 import UIKit
 import Leaf
-import Oath
 
 enum SampleType: String {
     case async  = "Asynchronous"

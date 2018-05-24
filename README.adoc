@@ -3,7 +3,7 @@
 :author_esc: Elias%20Abel
 :mail: admin@meniny.cn
 :desc: a versatile HTTP(s) networking framework written in Swift
-:version: 1.1.0
+:version: 1.2.0
 :na: N/A
 :ios: 8.0
 :macos: 10.9

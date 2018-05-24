@@ -12,7 +12,6 @@
 		5C8C0E7C2018F2AE00C3DC06 /* DisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C0E7A2018F2AE00C3DC06 /* DisplayViewController.swift */; };
 		5C8C0E7D2018F2AE00C3DC06 /* DisplayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C8C0E7B2018F2AE00C3DC06 /* DisplayViewController.xib */; };
 		6438D54320A59157005FFF07 /* Leaf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6438D54220A59157005FFF07 /* Leaf.framework */; };
-		6438D54520A59157005FFF07 /* Oath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6438D54420A59157005FFF07 /* Oath.framework */; };
 		64DE600D2018AFFC00EF60C3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DE600C2018AFFC00EF60C3 /* AppDelegate.swift */; };
 		64DE600F2018AFFC00EF60C3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DE600E2018AFFC00EF60C3 /* ViewController.swift */; };
 		64DE60122018AFFC00EF60C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64DE60102018AFFC00EF60C3 /* Main.storyboard */; };
@@ -36,7 +35,7 @@
 		6473571B206E3B4200ED6774 /* _config.yml */ = {isa = PBXFileReference; lastKnownFileType = text; name = _config.yml; path = ../_config.yml; sourceTree = "<group>"; };
 		6473571C206E3B4200ED6774 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ../.gitignore; sourceTree = "<group>"; };
 		6498A74B20A453DF0010554D /* README.adoc */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.adoc; path = ../README.adoc; sourceTree = "<group>"; };
-		6498A74C20A453DF0010554D /* Leaf.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Leaf.podspec; path = ../Leaf.podspec; sourceTree = "<group>"; };
+		6498A74C20A453DF0010554D /* Leaf.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Leaf.podspec; path = ../Leaf.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		64DE60092018AFFC00EF60C3 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64DE600C2018AFFC00EF60C3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		64DE600E2018AFFC00EF60C3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,7 +53,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6438D54320A59157005FFF07 /* Leaf.framework in Frameworks */,
-				6438D54520A59157005FFF07 /* Oath.framework in Frameworks */,
 				FF6F576F9B82C90CC302BC3A /* Pods_Sample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
