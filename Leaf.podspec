@@ -35,12 +35,4 @@ Pod::Spec.new do |s|
     ss.source_files  = "Leaf/Simple/*.{h,swift}"
   end
 
-  # s.subspec 'Promise' do |ss|
-  #   ss.dependency 'Leaf/Core'
-  #   ss.dependency 'Leaf/URLSession'
-  #   ss.dependency 'Leaf/Simple'
-  #   ss.dependency 'Oath'
-  #   ss.source_files  = "Leaf/Promise/*.{h,swift}"
-  # end
-
 end

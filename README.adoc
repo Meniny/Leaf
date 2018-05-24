@@ -74,14 +74,14 @@ v{version}, 2018-05-10
 |===
 2+^m|Type 1+^m|Requirement
 
-1.5+^.^|Platform ^|iOS ^|{ios}+
+1.5+^.^|Platform ^|iOS ^|{ios}
 ^|macOS ^e|{macos}
 ^|tvOS ^e|{tvos}
 ^|watchOS ^e|{watchos}
 ^|Linux ^e|{linux}
 
-^|IDE ^|Xcode ^| {xcode}+
-^|Language ^|Swift ^| {swift}+
+^|IDE ^|Xcode ^| {xcode}
+^|Language ^|Swift ^| {swift}
 |===
 
 == 📲 Installation
@@ -96,21 +96,13 @@ use_frameworks!
 pod '{name}'
 ----
 
-==== Promise
-
-[source, ruby, subs="verbatim,attributes"]
-----
-use_frameworks!
-pod '{name}/Promise'
-----
-
 === Manually
 
 Copy all files in the `{name}` directory into your project.
 
 == 🛌 Dependency
 
-* link:https://github.com/Meniny/Oath[Oath(Promise)]
+{na}
 
 == ❤️ Contribution
 
@@ -139,21 +131,6 @@ do {
     // ...
 }
 ----
-// 
-// === Promise
-//
-// [source, swift, subs="verbatim,attributes"]
-// ----
-// import {name}
-//
-// do {
-// let url = URL(string: "https://domain.com/someapi")!
-// Leaf.init(u, parameters: ["lan": "en-US"]).request(.GET).then { response in
-//     // ...
-// }.onError({ (error) in
-//     // ...
-// })
-// ----
 
 == ⚙️ Advanced
 
