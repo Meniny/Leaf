@@ -33,11 +33,11 @@ extension LeafRequest {
         }
         var acceptEncoding: [LeafContentEncoding]? = nil
         if let acceptEncodingValue = urlRequest.value(forHTTPHeaderField: HTTPHeader.acceptEncoding) {
-            acceptEncoding = acceptEncodingValue.components(separatedBy: ", ").flatMap({LeafContentEncoding(rawValue: $0)})
+            acceptEncoding = acceptEncodingValue.components(separatedBy: ", ").compactMap({LeafContentEncoding(rawValue: $0)})
         }
         var cacheControl: [LeafCacheControl]? = nil
         if let cacheControlValue = urlRequest.value(forHTTPHeaderField: HTTPHeader.cacheControl) {
-            cacheControl = cacheControlValue.components(separatedBy: ", ").flatMap({LeafCacheControl(rawValue: $0)})
+            cacheControl = cacheControlValue.components(separatedBy: ", ").compactMap({LeafCacheControl(rawValue: $0)})
         }
         var authorization = LeafAuthorization.none
         if let authorizationValue = urlRequest.value(forHTTPHeaderField: HTTPHeader.authorization) {
@@ -66,8 +66,8 @@ extension LeafRequest {
             urlRequest.setValue("\(contentLength)", forHTTPHeaderField: HTTPHeader.contentLength)
         }
         urlRequest.setValue(accept?.rawValue, forHTTPHeaderField: HTTPHeader.accept)
-        urlRequest.setValue(acceptEncoding?.flatMap({$0.rawValue}).joined(separator: ", "), forHTTPHeaderField: HTTPHeader.acceptEncoding)
-        urlRequest.setValue(cacheControl?.flatMap({$0.rawValue}).joined(separator: ", "), forHTTPHeaderField: HTTPHeader.cacheControl)
+        urlRequest.setValue(acceptEncoding?.compactMap({$0.rawValue}).joined(separator: ", "), forHTTPHeaderField: HTTPHeader.acceptEncoding)
+        urlRequest.setValue(cacheControl?.compactMap({$0.rawValue}).joined(separator: ", "), forHTTPHeaderField: HTTPHeader.cacheControl)
         if authorization != .none {
             urlRequest.setValue(authorization.rawValue, forHTTPHeaderField: HTTPHeader.authorization)
         }

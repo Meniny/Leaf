@@ -138,11 +138,11 @@ extension LeafRequest: CustomDebugStringConvertible {
         }
 
         if let acceptEncoding = acceptEncoding {
-            components.append("-H \"Accept-Encoding: \(acceptEncoding.flatMap({$0.rawValue}).joined(separator: ", "))\"")
+            components.append("-H \"Accept-Encoding: \(acceptEncoding.compactMap({$0.rawValue}).joined(separator: ", "))\"")
         }
 
         if let cacheControl = cacheControl {
-            components.append("-H \"Cache-Control: \(cacheControl.flatMap({$0.rawValue}).joined(separator: ", "))\"")
+            components.append("-H \"Cache-Control: \(cacheControl.compactMap({$0.rawValue}).joined(separator: ", "))\"")
         }
 
         if authorization != .none {

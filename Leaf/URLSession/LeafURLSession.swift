@@ -14,13 +14,13 @@ open class LeafURLSession: Leafable, Equatable {
         return lhs.session == rhs.session
     }
     
-    open static var shared: Leafable {
+    public static var shared: Leafable {
         return self.default
     }
 
-    open static let `default` = LeafURLSession.init(URLSession.shared)
+    public static let `default` = LeafURLSession.init(URLSession.shared)
 
-    open static let defaultCache: URLCache = {
+    public static let defaultCache: URLCache = {
         let defaultMemoryCapacity = 4 * 1024 * 1024
         let defaultDiskCapacity = 5 * defaultMemoryCapacity
         let cachesDirectoryURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first

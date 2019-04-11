@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Leaf'
-  s.version          = '1.2.0'
+  s.version          = '1.3.0'
   s.summary          = 'Versatile HTTP networking framework written in Swift.'
 
   s.homepage         = 'https://github.com/Meniny/Leaf'
@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/Meniny/Leaf.git', :tag => s.version.to_s }
   s.social_media_url = 'https://meniny.cn'
 
-  s.swift_version    = "4.1"
+  s.swift_version    = "5"
 
   s.ios.deployment_target     = '8.0'
   s.watchos.deployment_target = '2.0'

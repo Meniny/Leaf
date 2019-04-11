@@ -147,7 +147,7 @@ public class LeafBuilder: Equatable {
             setAcceptEncodings([])
         }
         if let acceptEncoding = acceptEncoding, var acceptEncodings = self.acceptEncoding {
-            if acceptEncodings.contains(acceptEncoding), let index = acceptEncodings.index(of: acceptEncoding) {
+            if acceptEncodings.contains(acceptEncoding), let index = acceptEncodings.firstIndex(of: acceptEncoding) {
                 acceptEncodings.remove(at: index)
             }
             acceptEncodings.append(acceptEncoding)
@@ -166,7 +166,7 @@ public class LeafBuilder: Equatable {
             setCacheControls([])
         }
         if let cacheControl = cacheControl, var cacheControls = self.cacheControl {
-            if cacheControls.contains(cacheControl), let index = cacheControls.index(of: cacheControl) {
+            if cacheControls.contains(cacheControl), let index = cacheControls.firstIndex(of: cacheControl) {
                 cacheControls.remove(at: index)
             }
             cacheControls.append(cacheControl)

@@ -32,7 +32,7 @@ open class LeafTask {
         case running, suspended, canceling, completed, waitingForConnectivity
     }
 
-    open let identifier: LeafTaskIdentifier
+    public let identifier: LeafTaskIdentifier
 
     open var request: LeafRequest?
 
@@ -42,7 +42,7 @@ open class LeafTask {
         }
     }
 
-    open let taskDescription: String?
+    public let taskDescription: String?
 
     open internal(set) var state: LeafState
 
@@ -217,7 +217,7 @@ extension LeafTask: Hashable {
 
 extension LeafTask: Equatable {
 
-    open static func ==(lhs: LeafTask, rhs: LeafTask) -> Bool {
+    public static func ==(lhs: LeafTask, rhs: LeafTask) -> Bool {
         return lhs.identifier == rhs.identifier
     }
 
